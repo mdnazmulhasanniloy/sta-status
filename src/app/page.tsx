@@ -1,101 +1,184 @@
+/* eslint-disable  @typescript-eslint/no-explicit-any */
+/* typescript-eslint: disable noImplicitAny */
+/* typescript-eslint-disable @typescript-eslint/no-implicit-any */
+"use client";
+import React, { useEffect, useState } from "react";
+import img1 from "../assets/1.webp";
+import img2 from "../assets/2.png";
+import img3 from "../assets/3.webp";
+import { CountdownCircleTimer } from "react-countdown-circle-timer";
 import Image from "next/image";
+import { ScaleLoader } from "react-spinners";
 
-export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="https://nextjs.org/icons/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
+const ranks = [img1, img2, img3];
+
+const Home = () => {
+  const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const res = await fetch(`http://115.127.156.14:1000/server`);
+        const data = await res.json();
+        // Do something with the data
+        setData(data);
+        setLoading(false);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+    fetchData();
+    const timeoutId = setInterval(() => {
+      fetchData();
+    }, 300000);
+
+    // Cleanup to clear the timeout if the component unmounts
+    return () => clearInterval(timeoutId);
+  }, []);
+  // const data = [
+  //   {
+  //     rank: 1,
+  //     teamName: "Tech Titans (Sakib)",
+  //     totalDelivered: "$10,640",
+  //     deliveryTarget: "$13,000",
+  //   },
+  //   {
+  //     rank: 2,
+  //     teamName: "Tech Crafters (Opu)",
+  //     totalDelivered: "$13,880",
+  //     deliveryTarget: "$13,000",
+  //   },
+  //   {
+  //     rank: 3,
+  //     teamName: "Solution Squad (Rafsan)",
+  //     totalDelivered: "$7,160",
+  //     deliveryTarget: "$13,000",
+  //   },
+  //   {
+  //     rank: 4,
+  //     teamName: "Quantum Legends (Sahinur)",
+  //     totalDelivered: "$8,080",
+  //     deliveryTarget: "$13,000",
+  //   },
+  //   {
+  //     rank: 5,
+  //     teamName: "Night Wingers (Shamim)",
+  //     totalDelivered: "$7,004",
+  //     deliveryTarget: "$8,000",
+  //   },
+  //   // Add more teams as needed
+  // ];
+
+  // bg-[#6bbcfa]
+
+  const handelToSetTime = () => {
+    return { shouldRepeat: true };
+  };
+
+  if (loading) {
+    return (
+      <div className="w-full h-full flex items-center justify-center bg-[#14254f]">
+        <ScaleLoader
+          color="#6bbcfa"
+          height={62}
+          margin={5}
+          radius={50}
+          width={5}
         />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+      </div>
+    );
+  }
+  return (
+    <div className="bg-[#14254f] w-full h-full flex items-center justify-around">
+      <CountdownCircleTimer
+        size={700}
+        isPlaying
+        onComplete={handelToSetTime}
+        duration={30}
+        colors={["#6bbcfa", "#F7B801", "#A30000", "#A30000"]}
+        colorsTime={[30, 20, 10, 0]}
+      >
+        {() => (
+          <div className=" text-[#FFD700] flex flex-col justify-center items-center rounded-lg mb-[20px] text-[150px] py-10 px-8 ">
+            {
+              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              //@ts-ignore
+              data[1]?.totalDelivered
+            }
+            <br />
+            <p className="text-[50px] text-white">Delivery in this Month</p>
+          </div>
+        )}
+      </CountdownCircleTimer>
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="https://nextjs.org/icons/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+      <div className="">
+        <div className="flex border-[#6bbcfa] border-2 h-[800px] w-[800px] rounded-3xl relative">
+          {/* Bottom Overlay */}
+          <div className="bg-[#31a6fffb] w-full h-[20px] blur-md absolute bottom-0 left-0 rounded-b-2xl" />
+
+          <div className="grid grid-cols-1 gap-5 overflow-auto w-full md-auto px-5 py-10 scroll-hide ">
+            {data?.slice(2, 5)?.map((team: any, index) => (
+              <div
+                key={team.rank}
+                className="flex items-center justify-between bg-[#305fd3] p-4 rounded-md"
+              >
+                <div className="flex items-center">
+                  <div className="text-white font-semibold text-lg">
+                    <Image
+                      src={`${ranks[index]?.src}`}
+                      alt=""
+                      width={70}
+                      height={70}
+                      className="h-[70px] w-[70px]"
+                    />
+                  </div>
+                  <div className="ml-4">
+                    <h3 className="text-white font-medium ">{team.teamName}</h3>
+                    <p className="text-gray-400 text-sm ">
+                      Delivered: {team.totalDelivered} / Target:{" "}
+                      {team.deliveryTarget}
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center">
+                  <div className="text-white font-semibold">
+                    {team.totalDelivered}
+                  </div>
+                </div>
+              </div>
+            ))}
+
+            {/* Non-ranked Data */}
+            {data?.slice(5, data?.length)?.map((team: any, index) => (
+              <div
+                key={team.rank}
+                className="flex items-center justify-between bg-[#305fd3] p-4 rounded-md"
+              >
+                <div className="flex items-center">
+                  <div className="text-white font-semibold text-lg w-[70px] text-center">
+                    <p>#{index + 4}</p>
+                  </div>
+                  <div className="ml-4">
+                    <h3 className="text-white font-medium">{team.teamName}</h3>
+                    <p className="text-gray-400 text-sm">
+                      Delivered: {team.totalDelivered} / Target:{" "}
+                      {team.deliveryTarget}
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center">
+                  <div className="text-white font-semibold">
+                    {team.totalDelivered}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+      </div>
     </div>
   );
-}
+};
+
+export default Home;
