@@ -19,7 +19,7 @@ const Home = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await fetch(`http://115.127.156.14:1000/server`);
+        const res = await fetch(`https://sta-status-board.vercel.app/server`);
         const data = await res.json();
         // Do something with the data
         setData(data);
